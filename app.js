@@ -42,6 +42,7 @@ c.addEventListener("mousemove", function (e) {
 })
 
 // 磚塊初始設定
+let touchCount = 0;
 let RockArray = [];
 // 產出 min ~ max 區間值
 function getRandom(min, max) {
@@ -54,6 +55,7 @@ class Rock {
         this.width = 50;
         this.height = 50;
         RockArray.push(this);
+        this.visable = true;
     }
 
     drawRock() {
@@ -79,28 +81,38 @@ for (let i = 0; i < 10; i++) {
 
 function drawCircle() {
     // 檢查球碰到磚塊
-    RockArray.forEach(rock => {
-        if (rock.touchOtherBall(circle_x, circle_y)) {
+    RockArray.forEach((rock, index) => {
+        if (rock.visable && rock.touchOtherBall(circle_x, circle_y)) {
+            touchCount++;
+            rock.visable = false;
             // 改變 X,Y方向速度，並將rock從RockArray中刪除
             // 從下方撞擊
             if (circle_y >= rock.y + rock.height) {
                 ySpeed *= -1;
-                RockArray.splice(RockArray.indexOf(rock), 1);
             }
             // 從上方撞擊
             else if ((circle_y <= rock.y)) {
                 ySpeed *= -1;
-                RockArray.splice(RockArray.indexOf(rock), 1);
             }
             // 從左方撞擊
             else if (circle_x <= rock.x) {
                 xSpeed *= -1;
-                RockArray.splice(RockArray.indexOf(rock), 1);
             }
             // 從右方撞擊
             else if (circle_x >= rock.x + rock.width) {
                 xSpeed *= -1;
-                RockArray.splice(RockArray.indexOf(rock), 1);
+            }
+
+            // RockArray.splice(RockArray.indexOf(rock), 1);
+            // if (RockArray.length == 0) {
+            //     alert("恭喜你破關，按下確定可重新遊玩");
+            //     location.reload();
+            // }
+
+            // 改善效能 O(n)
+            if (touchCount == 10) {
+                alert("恭喜你破關，按下確定可重新遊玩");
+                location.reload();
             }
         }
     });
@@ -139,7 +151,10 @@ function drawCircle() {
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);  //fillRect 畫方形 (x,y,w,h)
 
     // 劃出全部磚塊
-    RockArray.forEach(rock => rock.drawRock());
+    RockArray.forEach(rock => {
+        if (rock.visable)
+            rock.drawRock()
+    });
 
     // 劃出板子
     ctx.fillStyle = "black";
