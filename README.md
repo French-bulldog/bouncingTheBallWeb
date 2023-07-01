@@ -15,8 +15,3 @@
 ## 開發者
 
 - [French-bulldog](https://github.com/French-bulldog)
-
-
-
-測試 git
-主機 新增
